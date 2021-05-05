@@ -5,20 +5,3 @@ packages:
 output: {all: '| tee -a /var/log/cloud-init-output.log'}
 runcmd:
   - curl -s https://github.com/tuxpeople.keys >> /home/adminuser/.ssh/authorized_keys
-  - curl -sfL https://get.k3s.io | sh -
-  - until [ "$(sudo k3s kubectl get nodes | awk '{ print $2 }' | tail -1)" = "Ready" ]; do sleep 10; done
-  - curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
-  - helm repo add rancher-latest https://releases.rancher.com/server-charts/latest
-  - kubectl create namespace cattle-system
-  - kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v1.3.1/cert-manager.crds.yaml
-  - kubectl create namespace cert-manager
-  - helm repo add jetstack https://charts.jetstack.io
-  - helm repo update
-  - export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
-  - helm install cert-manager jetstack/cert-manager --namespace cert-manager --version v1.3.1
-  - sudo k3s kubectl -n cert-manager rollout status deploy/cert-manager
-  - sudo k3s kubectl -n cert-manager rollout status deploy/cert-manager-cainjector
-  - sudo k3s kubectl -n cert-manager rollout status deploy/cert-manager-webhook
-  - dig +short -x $(curl -s http://ipv4.icanhazip.com) | sed 's/\.$//' > /tmp/rancherurl
-  - helm install rancher rancher-latest/rancher --namespace cattle-system --set hostname=$(cat /tmp/rancherurl) --set replicas=1 --set letsEncrypt.email=thomas@tuxpeople.org --set ingress.tls.source=letsEncrypt
-  - until [ "$(curl -sfL https://$(cat /tmp/rancherurl)/ping)" = "Pong" ]; do echo "Waiting for Rancher to come up..."; sleep 30; done
