@@ -27,6 +27,9 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
  
+    - name: Get SSH keys
+      run: curl https://github.com/tuxpeople.keys > /tmp/id_rsa.pub
+
     - name: 'Terraform Format'
       uses: hashicorp/terraform-github-actions@master
       with:
