@@ -41,8 +41,8 @@ resource "azurerm_public_ip" "pip" {
   resource_group_name = azurerm_resource_group.main.name
   location            = azurerm_resource_group.main.location
   allocation_method   = "Dynamic"
-  domain_name_label   = "test-007-tedops"
-  reverse_fqdn        = "test-007-tedops.eastus2.cloudapp.azure.com."
+  domain_name_label   = "automationdemo-tedops"
+  reverse_fqdn        = "automationdemo-tedops.eastus2.cloudapp.azure.com."
 }
 
 resource "azurerm_network_interface" "main" {
