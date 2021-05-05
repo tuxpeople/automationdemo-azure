@@ -141,11 +141,11 @@ resource "azurerm_linux_virtual_machine" "vm" {
 }
 
 output "public_ip" {
-  value = azurerm_linux_virtual_machine.main.public_ip_address
+  value = azurerm_linux_virtual_machine.${element(var.instances, count.index)}.public_ip_address
 }
 
 output "utility_ip" {
-  value = azurerm_linux_virtual_machine.main.private_ip_address
+  value = azurerm_linux_virtual_machine.${element(var.instances, count.index)}.private_ip_address
 }
 
 output "fqdn" {
