@@ -143,8 +143,16 @@ resource "azurerm_linux_virtual_machine" "main" {
   ]
 
   provisioner "file" {
-    source      = "/github/workspace/key"
+    source      = "/github/workspace/id_rsa"
     destination = "/home/adminuser/key"
+  
+    connection {
+      type        = "ssh"
+      user        = "adminuser"
+      private_key = "/github/workspace/id_rsa"
+      host        = azurerm_linux_virtual_machine.main.name
+  }
+  
   }
 
   admin_ssh_key {
