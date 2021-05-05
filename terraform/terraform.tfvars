@@ -1,4 +1,4 @@
-prefix                = "tedops"
+prefix = "tedops"
 
 resource_group_name = "rg_${var.prefix}"
 location            = "eastus2"
