@@ -59,9 +59,9 @@ resource "azurerm_network_interface" "main" {
 }
 
 resource "azurerm_network_interface" "internal" {
-  name                      = "tedops-nic2"
-  resource_group_name       = azurerm_resource_group.main.name
-  location                  = azurerm_resource_group.main.location
+  name                = "tedops-nic2"
+  resource_group_name = azurerm_resource_group.main.name
+  location            = azurerm_resource_group.main.location
 
   ip_configuration {
     name                          = "internal"
@@ -108,12 +108,12 @@ data "template_file" "master-cloud-init" {
 }
 
 resource "azurerm_linux_virtual_machine" "main" {
-  name                            = "tedops-vm"
-  resource_group_name             = azurerm_resource_group.main.name
-  location                        = azurerm_resource_group.main.location
-  size                            = "Standard_B2s"
-  admin_username                  = "adminuser"
-  custom_data                     = base64encode(data.template_file.master-cloud-init.rendered)
+  name                = "tedops-vm"
+  resource_group_name = azurerm_resource_group.main.name
+  location            = azurerm_resource_group.main.location
+  size                = "Standard_B2s"
+  admin_username      = "adminuser"
+  custom_data         = base64encode(data.template_file.master-cloud-init.rendered)
 
   network_interface_ids = [
     azurerm_network_interface.main.id,
@@ -121,7 +121,7 @@ resource "azurerm_linux_virtual_machine" "main" {
   ]
 
   admin_ssh_key {
-    username = "adminuser"
+    username   = "adminuser"
     public_key = file("/tmp/id_rsa.pub")
   }
 
