@@ -1,0 +1,28 @@
+name: Ansible
+
+on:
+  schedule:
+    - cron: "5 4 * * *"
+
+jobs:
+  ansible:
+    name: 'Ansible'
+    runs-on: ubuntu-latest
+    environment: production
+ 
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+ 
+    steps:
+    # Checkout the repository to the GitHub Actions runner
+    - name: Play Ansible Playbook
+      uses: arillso/action.playbook@master
+      with:
+        playbook: ansible/playbook.yml
+        inventory: ansible/hosts.yml
+        private_key: ${{ secrets.SSH_PRIVATE_KEY }}
+      env:
+        ANSIBLE_HOST_KEY_CHECKING: 'false'
+        ANSIBLE_DEPRECATION_WARNINGS: 'false'
