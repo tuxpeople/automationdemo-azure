@@ -55,7 +55,7 @@ resource "azurerm_network_interface" "nic" {
   name                = "${var.vm_name}-nic-${count.index}"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
-  tags                = ${var.tags}
+  tags                = var.tags
   count               = "3"
 
   ip_configuration {
