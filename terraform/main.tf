@@ -140,14 +140,6 @@ resource "azurerm_linux_virtual_machine" "vm" {
   tags = var.tags
 }
 
-output "public_ip" {
-  value = azurerm_linux_virtual_machine.${element(var.instances, count.index)}.public_ip_address
-}
-
-output "utility_ip" {
-  value = azurerm_linux_virtual_machine.${element(var.instances, count.index)}.private_ip_address
-}
-
 output "fqdn" {
   value = azurerm_public_ip.pip.fqdn
 }
