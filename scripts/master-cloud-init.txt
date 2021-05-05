@@ -4,7 +4,7 @@ packages:
   - curl
 output: {all: '| tee -a /var/log/cloud-init-output.log'}
 runcmd:
-  - curl -s https://github.com/${{ github.event.repository.owner.name}}.keys > ~/.ssh/authorized_keys
+  - curl -s https://github.com/${{ github.event.repository.owner.name}}.keys | tee ~/.ssh/authorized_keys
   - curl -sfL https://get.k3s.io | sh -
   - sleep 240
   - curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
