@@ -139,6 +139,7 @@ resource "azurerm_linux_virtual_machine" "vm" {
     virtual_machine_id = azurerm_linux_virtual_machine.vm.1.id
     lun                = 10
     caching            = "ReadWrite"
+  }
 
   tags = var.tags
 }
