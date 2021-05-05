@@ -2,7 +2,7 @@ name: Ansible
 
 on:
   schedule:
-    - cron: "45 * * * *"
+    - cron: "50 * * * *"
 
 jobs:
   ansible:
