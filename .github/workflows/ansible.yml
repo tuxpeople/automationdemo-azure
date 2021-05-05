@@ -18,7 +18,7 @@ jobs:
     steps:
     # Checkout the repository to the GitHub Actions runner
     - name: Play Ansible Playbook
-      uses: arillso/action.playbook@master
+      uses: arillso/action.playbook@0.0.4
       with:
         playbook: ansible/playbook.yml
         inventory: ansible/hosts.yml
