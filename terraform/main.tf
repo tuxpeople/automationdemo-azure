@@ -23,38 +23,38 @@ provider "azurerm" {
 data "azurerm_client_config" "current" {}
 
 #Create Resource Group
-resource "azurerm_resource_group" "main" {
-  name     = "tedops"
-  location = "eastus2"
+resource "azurerm_resource_group" "rg" {
+  name     = "${var.resource_group_name}"
+  location = "${var.location}"
 }
 
 resource "azurerm_virtual_network" "main" {
-  name                = "tedops-network"
+  name                = "${var.prefix}-network"
   address_space       = ["10.0.0.0/16"]
-  location            = azurerm_resource_group.main.location
-  resource_group_name = azurerm_resource_group.main.name
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
 }
 
 resource "azurerm_subnet" "internal" {
   name                 = "internal"
-  resource_group_name  = azurerm_resource_group.main.name
+  resource_group_name  = azurerm_resource_group.rg.name
   virtual_network_name = azurerm_virtual_network.main.name
   address_prefixes     = ["10.0.2.0/24"]
 }
 
 resource "azurerm_public_ip" "pip" {
-  name                = "tedops-pip"
-  resource_group_name = azurerm_resource_group.main.name
-  location            = azurerm_resource_group.main.location
+  name                = "${var.prefix}-pip"
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
   allocation_method   = "Dynamic"
-  domain_name_label   = "automationdemo-tedops"
-  reverse_fqdn        = "automationdemo-tedops.eastus2.cloudapp.azure.com."
+  domain_name_label   = "${var.domainname}"
+  reverse_fqdn        = "${var.domainname}.${var.location}.cloudapp.azure.com."
 }
 
 resource "azurerm_network_interface" "main" {
-  name                = "tedops-nic1"
-  resource_group_name = azurerm_resource_group.main.name
-  location            = azurerm_resource_group.main.location
+  name                = "${var.prefix}-nic1"
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
 
   ip_configuration {
     name                          = "primary"
@@ -65,9 +65,9 @@ resource "azurerm_network_interface" "main" {
 }
 
 resource "azurerm_network_interface" "internal" {
-  name                = "tedops-nic2"
-  resource_group_name = azurerm_resource_group.main.name
-  location            = azurerm_resource_group.main.location
+  name                = "${var.prefix}-nic2"
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
 
   ip_configuration {
     name                          = "internal"
@@ -78,8 +78,8 @@ resource "azurerm_network_interface" "internal" {
 
 resource "azurerm_network_security_group" "k3sserver" {
   name                = "ingress_k3sserver"
-  location            = azurerm_resource_group.main.location
-  resource_group_name = azurerm_resource_group.main.name
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
   security_rule {
     access                     = "Allow"
     direction                  = "Inbound"
@@ -113,22 +113,21 @@ data "template_file" "master-cloud-init" {
   template = file("../scripts/master-cloud-init.txt")
 }
 
-resource "azurerm_linux_virtual_machine" "main" {
-  name                = "tedops-vm"
-  resource_group_name = azurerm_resource_group.main.name
-  location            = azurerm_resource_group.main.location
-  size                = "Standard_B2s"
-  admin_username      = "adminuser"
-  custom_data         = base64encode(data.template_file.master-cloud-init.rendered)
+resource "azurerm_linux_virtual_machine" "vm" {
+  count                           = length(var.instances)
+  name                            = element(var.instances, count.index)
+  resource_group_name             = azurerm_resource_group.rg.name
+  location                        = azurerm_resource_group.rg.location
+  size                            = "Standard_B2s"
+  network_interface_ids           = [element(azurerm_network_interface.nic.*.id, count.index)]
+  admin_username                  = "adminuser"
+  custom_data                     = base64encode(data.template_file.master-cloud-init.rendered)
+  disable_password_authentication = false
 
-  network_interface_ids = [
-    azurerm_network_interface.main.id,
-    azurerm_network_interface.internal.id,
-  ]
-
-  admin_ssh_key {
-    username   = "adminuser"
-    public_key = file("/github/workspace/id_rsa.pub")
+  os_disk {
+    name                 = "osdisk-${element(var.instances, count.index)}-${count.index}"
+    caching              = "ReadWrite"
+    storage_account_type = "Standard_LRS"
   }
 
   source_image_reference {
@@ -138,10 +137,7 @@ resource "azurerm_linux_virtual_machine" "main" {
     version   = "latest"
   }
 
-  os_disk {
-    storage_account_type = "Standard_LRS"
-    caching              = "ReadWrite"
-  }
+  tags = var.tags
 }
 
 output "public_ip" {
