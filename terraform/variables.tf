@@ -19,7 +19,7 @@ variable "domainname" {
 }
 
 variable "instances" {
-  type    = list(string)
+  type = list(string)
 }
 
 variable "tags" {
