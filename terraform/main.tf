@@ -24,8 +24,8 @@ data "azurerm_client_config" "current" {}
 
 #Create Resource Group
 resource "azurerm_resource_group" "rg" {
-  name     = "${var.resource_group_name}"
-  location = "${var.location}"
+  name     = var.resource_group_name
+  location = var.location
 }
 
 resource "azurerm_virtual_network" "main" {
@@ -47,7 +47,7 @@ resource "azurerm_public_ip" "pip" {
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   allocation_method   = "Dynamic"
-  domain_name_label   = "${var.domainname}"
+  domain_name_label   = var.domainname
   reverse_fqdn        = "${var.domainname}.${var.location}.cloudapp.azure.com."
 }
 
