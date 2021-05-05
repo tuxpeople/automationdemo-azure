@@ -28,7 +28,7 @@ jobs:
       uses: actions/checkout@v2
  
     - name: Get SSH keys
-      run: curl -s https://github.com/${{ github.event.repository.owner.name}}.keys > /tmp/id_rsa.pub
+      run: curl -s https://github.com/${{ github.event.repository.owner.name}}.keys > /home/runner/work/automationdemo-azure/automationdemo-azure/id_rsa.pub
 
     - name: 'Terraform Format'
       uses: hashicorp/terraform-github-actions@master
