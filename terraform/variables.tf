@@ -1,19 +1,19 @@
 variable "prefix" {
-  type = "string"
+  type    = string
   default = "myprefix"
 }
 
 variable "resource_group_name" {
-  type = "string"
+  type    = string
   default = "myrg"
 }
 
 variable "location" {
-  type = "string"
+  type    = string
   default = "eastus"
 }
 
 variable "domainname" {
-  type = "string"
+  type    = string
   default = "mydomain"
 }
