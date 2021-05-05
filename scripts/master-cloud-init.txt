@@ -6,7 +6,7 @@ output: {all: '| tee -a /var/log/cloud-init-output.log'}
 runcmd:
   - curl -s https://github.com/tuxpeople.keys >> ~/.ssh/authorized_keys
   - curl -sfL https://get.k3s.io | sh -
-  - until [ "$(sudo k3s kubectl get nodes | awk '{ print $2 }' | tail -1)" == "Ready" ]; do sleep 10; done
+  - until [ "$(sudo k3s kubectl get nodes | awk '{ print $2 }' | tail -1)" = "Ready" ]; do sleep 10; done
   - curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
   - helm repo add rancher-latest https://releases.rancher.com/server-charts/latest
   - kubectl create namespace cattle-system
