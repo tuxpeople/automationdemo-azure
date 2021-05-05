@@ -19,4 +19,4 @@ runcmd:
   - sudo k3s kubectl -n cert-manager rollout status deploy/cert-manager
   - sudo k3s kubectl -n cert-manager rollout status deploy/cert-manager-cainjector
   - sudo k3s kubectl -n cert-manager rollout status deploy/cert-manager-webhook
-  - helm install rancher rancher-latest/rancher --namespace cattle-system --set hostname=$(dig +short -x $(curl -s http://ipv4.icanhazip.com)) --set replicas=1 --set letsEncrypt.email=mail@example.com --set ingress.tls.source=letsEncrypt
+  - helm install rancher rancher-latest/rancher --namespace cattle-system --set hostname=$(dig +short -x $(curl -s http://ipv4.icanhazip.com) | sed 's/\.$//') --set replicas=1 --set letsEncrypt.email=mail@example.com --set ingress.tls.source=letsEncrypt
