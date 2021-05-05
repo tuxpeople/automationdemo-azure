@@ -110,7 +110,7 @@ resource "azurerm_network_interface_security_group_association" "main" {
 }
 
 resource "azurerm_managed_disk" "master" {
-  name                 = tedops-data
+  name                 = "tedops-data"
   resource_group_name  = azurerm_resource_group.main.name
   location             = azurerm_resource_group.main.location
   storage_account_type = "Standard_LRS"
