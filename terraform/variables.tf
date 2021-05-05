@@ -19,7 +19,7 @@ variable "domainname" {
 }
 
 variable "tags" {
-  type = map
+  type = map(any)
 }
 
 variable "vnet_name" {

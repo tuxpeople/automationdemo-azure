@@ -103,13 +103,13 @@ data "template_file" "master-cloud-init" {
 }
 
 resource "azurerm_linux_virtual_machine" "vm" {
-  name                            = "${var.vm_name}-vm-1"
-  resource_group_name             = azurerm_resource_group.rg.name
-  location                        = azurerm_resource_group.rg.location
-  size                            = "Standard_B2s"
-  network_interface_ids           = azurerm_network_interface.nic.1.id
-  admin_username                  = "adminuser"
-  custom_data                     = base64encode(data.template_file.master-cloud-init.rendered)
+  name                  = "${var.vm_name}-vm-1"
+  resource_group_name   = azurerm_resource_group.rg.name
+  location              = azurerm_resource_group.rg.location
+  size                  = "Standard_B2s"
+  network_interface_ids = azurerm_network_interface.nic.1.id
+  admin_username        = "adminuser"
+  custom_data           = base64encode(data.template_file.master-cloud-init.rendered)
 
   os_disk {
     name                 = "osdisk-1"
