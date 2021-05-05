@@ -20,8 +20,8 @@ jobs:
     - name: Play Ansible Playbook
       uses: arillso/action.playbook@0.0.4
       with:
-        playbook: ansible/playbook.yml
-        inventory: ansible/hosts.yml
+        playbook: /github/workspace/ansible/playbook.yml
+        inventory: /github/workspace/ansible/hosts.yml
         private_key: ${{ secrets.SSH_PRIVATE_KEY }}
       env:
         ANSIBLE_HOST_KEY_CHECKING: 'false'
