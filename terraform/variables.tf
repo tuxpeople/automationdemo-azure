@@ -17,3 +17,13 @@ variable "domainname" {
   type    = string
   default = "mydomain"
 }
+
+variable "instances" {
+  type    = list(string)
+}
+
+variable "tags" {
+  type = list(object({
+    environment = string
+  }))
+}

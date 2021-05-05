@@ -51,21 +51,8 @@ resource "azurerm_public_ip" "pip" {
   reverse_fqdn        = "${var.domainname}.${var.location}.cloudapp.azure.com."
 }
 
-resource "azurerm_network_interface" "main" {
-  name                = "${var.prefix}-nic1"
-  resource_group_name = azurerm_resource_group.rg.name
-  location            = azurerm_resource_group.rg.location
-
-  ip_configuration {
-    name                          = "primary"
-    subnet_id                     = azurerm_subnet.internal.id
-    private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = azurerm_public_ip.pip.id
-  }
-}
-
-resource "azurerm_network_interface" "internal" {
-  name                = "${var.prefix}-nic2"
+resource "azurerm_network_interface" "nic" {
+  name                = "${var.prefix}-nic"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
 
