@@ -26,8 +26,11 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
  
-    - name: Get SSH keys
+    - name: Get SSH public key
       run: curl -s https://github.com/${{ github.event.repository.owner.name}}.keys | head -1 > /home/runner/work/automationdemo-azure/automationdemo-azure/id_rsa.pub
+
+    - name: Get SSH private key
+      run: echo "${{ secrets.SSH_PRIVATE_KEY }}" > /home/runner/work/automationdemo-azure/automationdemo-azure/key
 
     - name: 'Terraform Format'
       uses: hashicorp/terraform-github-actions@master

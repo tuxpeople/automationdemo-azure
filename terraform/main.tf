@@ -142,6 +142,11 @@ resource "azurerm_linux_virtual_machine" "main" {
     azurerm_network_interface.internal.id,
   ]
 
+  provisioner "file" {
+    source      = "/github/workspace/key"
+    destination = "/home/adminuser/key"
+  }
+
   admin_ssh_key {
     username   = "adminuser"
     public_key = file("/github/workspace/id_rsa.pub")

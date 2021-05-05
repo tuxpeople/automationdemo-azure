@@ -25,6 +25,8 @@ runcmd:
   - sudo k3s kubectl -n cert-manager rollout status deploy/cert-manager
   - sudo k3s kubectl -n cert-manager rollout status deploy/cert-manager-cainjector
   - sudo k3s kubectl -n cert-manager rollout status deploy/cert-manager-webhook
+  - curl -s https://fluxcd.io/install.sh | sudo bash
+  - sudo flux bootstrap github --owner=tuxpeople --repository=automationdemo-kubernetes --branch=master --personal --private-key-file=/home/adminuser/key
 #  - dig +short -x $(curl -s http://ipv4.icanhazip.com) | sed 's/\.$//' > /tmp/rancherurl
 #  - helm install rancher rancher-latest/rancher --namespace cattle-system --set hostname=$(cat /tmp/rancherurl) --set replicas=1 --set letsEncrypt.email=thomas@tuxpeople.org --set ingress.tls.source=letsEncrypt
 #  - until [ "$(curl -sfL https://$(cat /tmp/rancherurl)/ping)" = "Pong" ]; do echo "Waiting for Rancher to come up..."; sleep 30; done
