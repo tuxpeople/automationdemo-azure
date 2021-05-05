@@ -22,18 +22,130 @@ resource "azurerm_resource_group" "tedops" {
   location = "eastus2"
 }
 
-#Create Virtual Network
-resource "azurerm_virtual_network" "vnet" {
-  name                = "tedops-vnet"
-  address_space       = ["192.168.0.0/16"]
-  location            = "eastus2"
-  resource_group_name = azurerm_resource_group.tedops.name
+resource "azurerm_virtual_network" "main" {
+  name                = "tedops-network"
+  address_space       = ["10.0.3.0/16"]
+  location            = azurerm_resource_group.main.location
+  resource_group_name = azurerm_resource_group.main.name
 }
 
-# Create Subnet
-resource "azurerm_subnet" "subnet" {
-  name                 = "subnet"
-  resource_group_name  = azurerm_resource_group.tedops.name
-  virtual_network_name = azurerm_virtual_network.vnet.name
-  address_prefix       = "192.168.0.0/24"
+resource "azurerm_subnet" "internal" {
+  name                 = "internal"
+  resource_group_name  = azurerm_resource_group.main.name
+  virtual_network_name = azurerm_virtual_network.main.name
+  address_prefixes     = ["10.0.5.0/24"]
+}
+
+resource "azurerm_public_ip" "pip" {
+  name                = "tedops-pip"
+  resource_group_name = azurerm_resource_group.main.name
+  location            = azurerm_resource_group.main.location
+  allocation_method   = "Dynamic"
+  domain_name_label   = "test-007-tedops"
+  reverse_fqdn        = "test-007-tedops.eastus.cloudapp.azure.com."
+}
+
+resource "azurerm_network_interface" "main" {
+  name                = "tedops-nic1"
+  resource_group_name = azurerm_resource_group.main.name
+  location            = azurerm_resource_group.main.location
+
+  ip_configuration {
+    name                          = "primary"
+    subnet_id                     = azurerm_subnet.internal.id
+    private_ip_address_allocation = "Dynamic"
+    public_ip_address_id          = azurerm_public_ip.pip.id
+  }
+}
+
+resource "azurerm_network_interface" "internal" {
+  name                      = "tedops-nic2"
+  resource_group_name       = azurerm_resource_group.main.name
+  location                  = azurerm_resource_group.main.location
+
+  ip_configuration {
+    name                          = "internal"
+    subnet_id                     = azurerm_subnet.internal.id
+    private_ip_address_allocation = "Dynamic"
+  }
+}
+
+resource "azurerm_network_security_group" "k3sserver" {
+  name                = "ingress_k3sserver"
+  location            = azurerm_resource_group.main.location
+  resource_group_name = azurerm_resource_group.main.name
+  security_rule {
+    access                     = "Allow"
+    direction                  = "Inbound"
+    name                       = "https"
+    priority                   = 100
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    source_address_prefix      = "*"
+    destination_port_range     = "443"
+    destination_address_prefix = azurerm_network_interface.main.private_ip_address
+  }
+  security_rule {
+    access                     = "Allow"
+    direction                  = "Inbound"
+    name                       = "http"
+    priority                   = 101
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    source_address_prefix      = "*"
+    destination_port_range     = "80"
+    destination_address_prefix = azurerm_network_interface.main.private_ip_address
+  }
+}
+
+resource "azurerm_network_interface_security_group_association" "main" {
+  network_interface_id      = azurerm_network_interface.internal.id
+  network_security_group_id = azurerm_network_security_group.k3sserver.id
+}
+
+data "template_file" "master-cloud-init" {
+  template = file("../scripts/master-cloud-init.txt")
+}
+
+resource "azurerm_linux_virtual_machine" "main" {
+  name                            = "tedops-vm"
+  resource_group_name             = azurerm_resource_group.main.name
+  location                        = azurerm_resource_group.main.location
+  size                            = "Standard_B2s"
+  admin_username                  = "adminuser"
+  custom_data                     = base64encode(data.template_file.master-cloud-init.rendered)
+
+  network_interface_ids = [
+    azurerm_network_interface.main.id,
+    azurerm_network_interface.internal.id,
+  ]
+
+  admin_ssh_key {
+    username = "adminuser"
+    public_key = file("/tmp/id_rsa.pub")
+  }
+
+  source_image_reference {
+    publisher = "Canonical"
+    offer     = "UbuntuServer"
+    sku       = "16.04-LTS"
+    version   = "latest"
+  }
+
+  os_disk {
+    storage_account_type = "Standard_LRS"
+    caching              = "ReadWrite"
+  }
+}
+
+output "public_ip" {
+  value = azurerm_linux_virtual_machine.main.public_ip_address
+}
+
+output "utility_ip" {
+  value = azurerm_linux_virtual_machine.main.private_ip_address
+}
+
+output "fqdn" {
+  value = azurerm_public_ip.pip.fqdn
 }
