@@ -18,12 +18,16 @@ variable "domainname" {
   default = "mydomain"
 }
 
-variable "instances" {
-  type = list(string)
+variable "tags" {
+  type = map
 }
 
-variable "tags" {
-  type = list(object({
-    environment = string
-  }))
+variable "vnet_name" {
+  description = "Name of the virtual network to create"
+  default     = "tfvnet"
+}
+
+variable "vm_name" {
+  description = "Name of the virtual machine to create"
+  default     = "tfvm"
 }

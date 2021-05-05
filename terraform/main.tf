@@ -29,14 +29,14 @@ resource "azurerm_resource_group" "rg" {
 }
 
 resource "azurerm_virtual_network" "main" {
-  name                = "${var.prefix}-network"
+  name                = "${var.vnet_name}-network"
   address_space       = ["10.0.0.0/16"]
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
 }
 
 resource "azurerm_subnet" "internal" {
-  name                 = "internal"
+  name                 = var.vnet_name
   resource_group_name  = azurerm_resource_group.rg.name
   virtual_network_name = azurerm_virtual_network.main.name
   address_prefixes     = ["10.0.2.0/24"]
@@ -52,9 +52,11 @@ resource "azurerm_public_ip" "pip" {
 }
 
 resource "azurerm_network_interface" "nic" {
-  name                = "${var.prefix}-nic"
+  name                = "${var.vm_name}-nic-${count.index}"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
+  tags                = ${var.tags}
+  count               = "3"
 
   ip_configuration {
     name                          = "internal"
@@ -101,18 +103,16 @@ data "template_file" "master-cloud-init" {
 }
 
 resource "azurerm_linux_virtual_machine" "vm" {
-  count                           = length(var.instances)
-  name                            = element(var.instances, count.index)
+  name                            = "${var.vm_name}-vm-1"
   resource_group_name             = azurerm_resource_group.rg.name
   location                        = azurerm_resource_group.rg.location
   size                            = "Standard_B2s"
-  network_interface_ids           = [element(azurerm_network_interface.nic.*.id, count.index)]
+  network_interface_ids           = azurerm_network_interface.nic.1.id
   admin_username                  = "adminuser"
   custom_data                     = base64encode(data.template_file.master-cloud-init.rendered)
-  disable_password_authentication = false
 
   os_disk {
-    name                 = "osdisk-${element(var.instances, count.index)}-${count.index}"
+    name                 = "osdisk-1"
     caching              = "ReadWrite"
     storage_account_type = "Standard_LRS"
   }
@@ -123,6 +123,22 @@ resource "azurerm_linux_virtual_machine" "vm" {
     sku       = "16.04-LTS"
     version   = "latest"
   }
+
+  resource "azurerm_managed_disk" "managed_disk" {
+    name                 = datadisk-1
+    location             = azurerm_resource_group.rg.location
+    resource_group_name  = azurerm_resource_group.rg.name
+    storage_account_type = "Standard_LRS"
+    create_option        = "Empty"
+    disk_size_gb         = 10
+    tags                 = var.tags
+  }
+
+  resource "azurerm_virtual_machine_data_disk_attachment" "managed_disk_attach" {
+    managed_disk_id    = azurerm_managed_disk.managed_disk.1.id
+    virtual_machine_id = azurerm_linux_virtual_machine.vm.1.id
+    lun                = 10
+    caching            = "ReadWrite"
 
   tags = var.tags
 }
