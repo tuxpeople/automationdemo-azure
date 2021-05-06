@@ -65,6 +65,6 @@ jobs:
       id: apply
       run: terraform apply -no-color tfplan
 
-    - run: echo ${{ steps.apply.outputs.stdout }}
-    - run: echo ${{ steps.apply.outputs.stderr }}
-    - run: echo ${{ steps.apply.outputs.exitcode }}
+    - run: echo "${{ steps.apply.outputs.stdout }}"
+    - run: echo "${{ steps.apply.outputs.stderr }}"
+    - run: echo "${{ steps.apply.outputs.exitcode }}"
