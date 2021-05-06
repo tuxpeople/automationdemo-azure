@@ -44,8 +44,8 @@ resource "azurerm_network_interface_security_group_association" "main" {
 
 resource "azurerm_linux_virtual_machine" "bastion" {
   name                  = "${var.vm_name}-bastion"
-  resource_group_name   = internal azurerm_resource_group.rg.name
-  location              = internal azurerm_resource_group.rg.location
+  location              = azurerm_resource_group.rg.location
+  resource_group_name   = azurerm_resource_group.rg.name
   size                  = "Standard_B1s"
   admin_username        = "adminuser"
   custom_data           = filebase64("../scripts/bastion-cloud-init.txt")
