@@ -15,7 +15,7 @@ jobs:
       ARM_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET }}
       ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
       ARM_TENANT_ID: ${{ secrets.AZURE_AD_TENANT_ID }}
-      tf_actions_working_dir: "./terraform"
+      TF_ACTIONS_WORKING_DIR: "./terraform"
 
     runs-on: ubuntu-latest
     environment: production
@@ -24,6 +24,7 @@ jobs:
     defaults:
       run:
         shell: bash
+        working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
  
     steps:
     # Checkout the repository to the GitHub Actions runner
