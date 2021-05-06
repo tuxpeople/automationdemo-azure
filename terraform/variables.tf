@@ -3,13 +3,13 @@ variable "resource_group_name" {
 }
 
 variable "vnet_name" {
-    description = "Name of the virtual network to create"
-    default     = "tfvnet"
+  description = "Name of the virtual network to create"
+  default     = "tfvnet"
 }
 
 variable "vm_name" {
-    description = "Name of the virtual machine to create"
-    default     = "tfvm"
+  description = "Name of the virtual machine to create"
+  default     = "tfvm"
 }
 
 variable "location" {
@@ -18,7 +18,7 @@ variable "location" {
 }
 
 variable "tags" {
-  type        = "map"
+  type        = map(string)
   default     = {}
   description = "Any tags which should be assigned to the resources in this example"
 }
