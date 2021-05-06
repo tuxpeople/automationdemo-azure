@@ -49,7 +49,7 @@ resource "azurerm_linux_virtual_machine" "bastion" {
   size                  = "Standard_B1s"
   admin_username        = "adminuser"
   custom_data           = filebase64("../scripts/bastion-cloud-init.txt")
-  network_interface_ids = azurerm_network_interface.bastion.id
+  network_interface_ids = [azurerm_network_interface.bastion.id]
 
   admin_ssh_key {
     username   = "adminuser"
