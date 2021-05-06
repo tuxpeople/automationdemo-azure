@@ -40,8 +40,8 @@ resource "azurerm_lb" "lb" {
 }
 
 resource "azurerm_lb_backend_address_pool" "backend" {
-  loadbalancer_id     = azurerm_lb.lb.id
-  name                = "BackEndAddressPool"
+  loadbalancer_id = azurerm_lb.lb.id
+  name            = "BackEndAddressPool"
 }
 
 resource "azurerm_lb_nat_rule" "http" {
