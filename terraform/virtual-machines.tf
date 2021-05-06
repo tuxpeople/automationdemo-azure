@@ -7,6 +7,10 @@ resource "azurerm_availability_set" "avset" {
   managed                      = true
 }
 
+data "template_file" "master-cloud-init" {
+  template = file("../scripts/master-cloud-init.txt")
+}
+
 resource "azurerm_linux_virtual_machine" "test" {
   name                  = "${var.vm_name}-vm-${count.index}"
   location              = azurerm_resource_group.rg.location
@@ -16,6 +20,7 @@ resource "azurerm_linux_virtual_machine" "test" {
   size                  = "Standard_B2s"
   count                 = "3"
   admin_username        = "adminuser"
+  custom_data         = base64encode(data.template_file.master-cloud-init.rendered)
 
   admin_ssh_key {
     username   = "adminuser"
