@@ -29,7 +29,11 @@ jobs:
 
     - uses: hashicorp/setup-terraform@v1
 
-    - name: Terraform fmt
+    - name: Terraform Init
+      id: init
+      run: terraform init
+
+    - name: Terraform destroy
       id: destroy
       run: terraform destroy -auto-approve
     
