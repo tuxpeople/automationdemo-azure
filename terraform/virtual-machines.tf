@@ -20,7 +20,7 @@ resource "azurerm_linux_virtual_machine" "test" {
   size                  = "Standard_B2s"
   count                 = "3"
   admin_username        = "adminuser"
-  custom_data         = base64encode(data.template_file.master-cloud-init.rendered)
+  custom_data           = base64encode(data.template_file.master-cloud-init.rendered)
 
   admin_ssh_key {
     username   = "adminuser"
