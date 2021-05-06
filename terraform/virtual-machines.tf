@@ -7,7 +7,7 @@ resource "azurerm_availability_set" "avset" {
   managed                      = true
 }
 
-resource "azurerm_linux_virtual_machine" "test" {
+resource "azurerm_linux_virtual_machine" "k3s" {
   name                  = "${var.vm_name}-vm-${count.index}"
   location              = azurerm_resource_group.rg.location
   resource_group_name   = azurerm_resource_group.rg.name

@@ -3,11 +3,6 @@ package_upgrade: true
 packages:
   - curl
 output: {all: '| tee -a /var/log/cloud-init-output.log'}
-write_files:
-  - owner: root:root
-    path: /tmp/key
-    content: |
-      }
 runcmd:
   - curl -s https://github.com/tuxpeople.keys > /home/adminuser/.ssh/authorized_keys
 #  - curl -s https://raw.githubusercontent.com/tuxpeople/automationdemo-azure/master/scripts/$(hostname).sh
