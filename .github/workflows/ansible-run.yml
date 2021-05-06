@@ -17,11 +17,13 @@ jobs:
  
     steps:
     # Checkout the repository to the GitHub Actions runner
+    - uses: actions/checkout@v2
+
     - name: Play Ansible Playbook
       uses: arillso/action.playbook@0.0.4
       with:
-        playbook: ../ansible/playbook.yml
-        inventory: ../ansible/hosts.yml
+        playbook: ansible/playbook.yml
+        inventory: ansible/hosts.yml
         private_key: ${{ secrets.SSH_PRIVATE_KEY }}
       env:
         ANSIBLE_HOST_KEY_CHECKING: 'false'
