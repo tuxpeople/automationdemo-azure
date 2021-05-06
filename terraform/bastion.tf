@@ -53,7 +53,7 @@ resource "azurerm_linux_virtual_machine" "bastion" {
 
   admin_ssh_key {
     username   = "adminuser"
-    public_key = file("/github/workspace/id_rsa.pub")
+    public_key = file("id_rsa.pub")
   }
 
   source_image_reference {
