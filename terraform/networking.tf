@@ -25,7 +25,7 @@ resource "azurerm_public_ip" "pip" {
   location            = azurerm_resource_group.rg.location
   allocation_method   = "Dynamic"
   domain_name_label   = "automationdemo-tedops"
-  reverse_fqdn        = "automationdemo-tedops.eastus2.cloudapp.azure.com."
+  reverse_fqdn        = "automationdemo-tedops.${azurerm_resource_group.rg.location}.cloudapp.azure.com."
 }
 
 resource "azurerm_lb" "lb" {
