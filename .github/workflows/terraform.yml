@@ -40,7 +40,6 @@ jobs:
         sed -i -e 's/^/     /' ./id_rsa_intended
         sed -i -e '/    content:/r ./id_rsa_intended' ../scripts/bastion-cloud-init.txt
         sudo chmod 600 ~/.ssh/id_rsa
-        #ssh-keyscan -H ${{secrets.DEPLOY_SERVER}} > ~/.ssh/known_hosts
 
     - uses: hashicorp/setup-terraform@v1
 
@@ -69,6 +68,14 @@ jobs:
       if: github.ref == 'refs/heads/master'
       id: output
       run: terraform output > tfout.txt
+
+    - name: Copy ouputs to bastion host
+      run: |
+        bastion=$(grep bastion tfout.txt | cut -d'"' -f2)
+        ssh-keyscan -H ${bastion} > ~/.ssh/known_hosts
+        scp tfout.txt adminuser@${bastion}:
+        scp ~/.ssh/id_rsa adminuser@${bastion}:~/.ssh/id_rsa
+        ssh adminuser@${bastion} "chmod 600 ~/.ssh/id_rsa"
 
     # - run: echo "${{ steps.apply.outputs.stdout }}"
     # - run: echo "${{ steps.apply.outputs.stderr }}"
