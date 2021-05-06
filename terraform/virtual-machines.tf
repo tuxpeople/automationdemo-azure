@@ -14,11 +14,9 @@ resource "azurerm_linux_virtual_machine" "test" {
     version   = "latest"
   }
 
-  storage_os_disk {
-    name              = "myosdisk-${count.index}"
-    caching           = "ReadWrite"
-    create_option     = "FromImage"
-    managed_disk_type = "Standard_LRS"
+   {
+    storage_account_type = "Standard_LRS"
+    caching              = "ReadWrite"
   }
 
   tags = var.tags
