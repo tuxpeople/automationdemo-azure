@@ -21,11 +21,28 @@ resource "azurerm_subnet" "subnet2" {
 
 resource "azurerm_public_ip" "pip" {
   name                = "tedops-pip"
-  resource_group_name = azurerm_resource_group.main.name
-  location            = azurerm_resource_group.main.location
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
   allocation_method   = "Dynamic"
   domain_name_label   = "automationdemo-tedops"
   reverse_fqdn        = "automationdemo-tedops.eastus2.cloudapp.azure.com."
+}
+
+resource "azurerm_lb" "lb" {
+ name                = "loadBalancer"
+ location            = azurerm_resource_group.rg.location
+ resource_group_name = azurerm_resource_group.rg.name
+
+ frontend_ip_configuration {
+   name                 = "publicIPAddress"
+   public_ip_address_id = azurerm_public_ip.pip.id
+ }
+}
+
+resource "azurerm_lb_backend_address_pool" "test" {
+ resource_group_name = azurerm_resource_group.rg.name
+ loadbalancer_id     = azurerm_lb.lb.id
+ name                = "BackEndAddressPool"
 }
 
 resource "azurerm_network_interface" "main" {
