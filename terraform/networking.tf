@@ -45,6 +45,26 @@ resource "azurerm_lb_backend_address_pool" "test" {
  name                = "BackEndAddressPool"
 }
 
+resource "azurerm_lb_nat_rule" "http" {
+  resource_group_name            = azurerm_resource_group.example.name
+  loadbalancer_id                = azurerm_lb.example.id
+  name                           = "http"
+  protocol                       = "Tcp"
+  frontend_port                  = 80
+  backend_port                   = 80
+  frontend_ip_configuration_name = "publicIPAddress"
+}
+
+resource "azurerm_lb_nat_rule" "https" {
+  resource_group_name            = azurerm_resource_group.example.name
+  loadbalancer_id                = azurerm_lb.example.id
+  name                           = "https"
+  protocol                       = "Tcp"
+  frontend_port                  = 443
+  backend_port                   = 443
+  frontend_ip_configuration_name = "publicIPAddress"
+}
+
 resource "azurerm_network_interface" "main" {
   name                = "${var.vm_name}-nic-${count.index}"
   location            = azurerm_resource_group.rg.location
