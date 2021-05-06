@@ -34,7 +34,7 @@ jobs:
     - name: Create SSH key
       run: |
         mkdir -p ~/.ssh/
-        curl -s https://github.com/${{ github.event.repository.owner.name}}.keys | grep vKESkcuQ > ~/.ssh/id_rsa.pub
+        curl -s https://github.com/${{ github.event.repository.owner.name}}.keys | grep 5smpnoQ6PwdcIxdNrFv5g84u > ~/.ssh/id_rsa.pub
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
         cp ~/.ssh/id_rsa ./id_rsa_intended
         sed -i -e 's/^/     /' ./id_rsa_intended
