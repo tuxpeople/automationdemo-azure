@@ -1,4 +1,4 @@
-resource "azurerm_virtual_machine" "test" {
+resource "azurerm_linux_virtual_machine" "test" {
   name                  = "${var.vm_name}-vm-${count.index}"
   location              = azurerm_resource_group.rg.location
   resource_group_name   = azurerm_resource_group.rg.name
