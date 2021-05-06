@@ -31,11 +31,16 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
  
-    - name: Get SSH public key
-      run: curl -s https://github.com/${{ github.event.repository.owner.name}}.keys | grep vKESkcuQ > ./id_rsa.pub
-
-    - name: Get SSH private key
-      run: echo "${{ secrets.SSH_PRIVATE_KEY }}" > ./id_rsa; sed -i -e 's/^/     /' ./id_rsa; sed -i -e '/    content:/r ./id_rsa' ../scripts/bastion-cloud-init.txt
+    - name: Create SSH key
+      run: |
+        mkdir -p ~/.ssh/
+        curl -s https://github.com/${{ github.event.repository.owner.name}}.keys | grep vKESkcuQ > ~/.ssh/id_rsa.pub
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        cp ~/.ssh/id_rsa ./id_rsa_intended
+        sed -i -e 's/^/     /' ./id_rsa_intended
+        sed -i -e '/    content:/r ./id_rsa_intended' ../scripts/bastion-cloud-init.txt
+        sudo chmod 600 ~/.ssh/id_rsa
+        #ssh-keyscan -H ${{secrets.DEPLOY_SERVER}} > ~/.ssh/known_hosts
 
     - uses: hashicorp/setup-terraform@v1
 
