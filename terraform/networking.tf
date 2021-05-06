@@ -46,8 +46,8 @@ resource "azurerm_lb_backend_address_pool" "test" {
 }
 
 resource "azurerm_lb_nat_rule" "http" {
-  resource_group_name            = azurerm_resource_group.example.name
-  loadbalancer_id                = azurerm_lb.example.id
+  resource_group_name            = azurerm_resource_group.rg.name
+  loadbalancer_id                = azurerm_lb.lb.id
   name                           = "http"
   protocol                       = "Tcp"
   frontend_port                  = 80
@@ -56,8 +56,8 @@ resource "azurerm_lb_nat_rule" "http" {
 }
 
 resource "azurerm_lb_nat_rule" "https" {
-  resource_group_name            = azurerm_resource_group.example.name
-  loadbalancer_id                = azurerm_lb.example.id
+  resource_group_name            = azurerm_resource_group.rg.name
+  loadbalancer_id                = azurerm_lb.lb.id
   name                           = "https"
   protocol                       = "Tcp"
   frontend_port                  = 443
