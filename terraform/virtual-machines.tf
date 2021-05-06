@@ -7,6 +7,11 @@ resource "azurerm_linux_virtual_machine" "test" {
   count                 = "3"
   admin_username        = "adminuser"
 
+  admin_ssh_key {
+    username   = "adminuser"
+    public_key = file("/github/workspace/id_rsa.pub")
+  }
+
   source_image_reference {
     publisher = "Canonical"
     offer     = "UbuntuServer"
