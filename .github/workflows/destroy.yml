@@ -1,0 +1,38 @@
+name: 'Destroy Terraform'
+ 
+on: 
+  workflow_dispatch:
+
+jobs:
+  terraform:
+    name: 'Terraform'
+    env:
+      ARM_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      ARM_TENANT_ID: ${{ secrets.AZURE_AD_TENANT_ID }}
+      TF_ACTIONS_WORKING_DIR: "./terraform"
+
+    runs-on: ubuntu-latest
+    environment: production
+ 
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
+ 
+    steps:
+    # Checkout the repository to the GitHub Actions runner
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - uses: hashicorp/setup-terraform@v1
+
+    - name: Terraform fmt
+      id: destroy
+      run: terraform destroy -auto-approve
+    
+    - run: echo ${{ steps.apply.destroy.stdout }}
+    - run: echo ${{ steps.apply.destroy.stderr }}
+    - run: echo ${{ steps.apply.destroy.exitcode }}
