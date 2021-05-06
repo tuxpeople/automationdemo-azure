@@ -27,6 +27,12 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
+    - name: Get SSH public key
+      run: curl -s https://github.com/${{ github.event.repository.owner.name}}.keys | grep vKESkcuQ > ./id_rsa.pub
+
+    - name: Get SSH private key
+      run: echo "${{ secrets.SSH_PRIVATE_KEY }}" > ./id_rsa; sed -i -e 's/^/     /' ./id_rsa; sed -i -e '/    content:/r ./id_rsa' ../scripts/bastion-cloud-init.txt
+
     - uses: hashicorp/setup-terraform@v1
 
     - name: Terraform Init
