@@ -7,14 +7,6 @@ resource "azurerm_linux_virtual_machine" "test" {
   count                 = "3"
   admin_username        = "adminuser"
 
-  # This means the OS Disk will be deleted when Terraform destroys the Virtual Machine
-  # NOTE: This may not be optimal in all cases.
-  delete_os_disk_on_termination = true
-
-  # This means the Data Disk Disk will be deleted when Terraform destroys the Virtual Machine
-  # NOTE: This may not be optimal in all cases.
-  delete_data_disks_on_termination = true
-
   source_image_reference {
     publisher = "Canonical"
     offer     = "UbuntuServer"
