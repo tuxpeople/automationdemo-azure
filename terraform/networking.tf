@@ -19,6 +19,15 @@ resource "azurerm_subnet" "subnet2" {
   address_prefixes     = ["10.0.1.0/24"]
 }
 
+resource "azurerm_public_ip" "pip" {
+  name                = "tedops-pip"
+  resource_group_name = azurerm_resource_group.main.name
+  location            = azurerm_resource_group.main.location
+  allocation_method   = "Dynamic"
+  domain_name_label   = "automationdemo-tedops"
+  reverse_fqdn        = "automationdemo-tedops.eastus2.cloudapp.azure.com."
+}
+
 resource "azurerm_network_interface" "main" {
   name                = "${var.vm_name}-nic-${count.index}"
   location            = azurerm_resource_group.rg.location
