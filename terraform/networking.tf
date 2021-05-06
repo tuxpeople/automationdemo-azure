@@ -29,20 +29,20 @@ resource "azurerm_public_ip" "pip" {
 }
 
 resource "azurerm_lb" "lb" {
- name                = "loadBalancer"
- location            = azurerm_resource_group.rg.location
- resource_group_name = azurerm_resource_group.rg.name
+  name                = "loadBalancer"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
 
- frontend_ip_configuration {
-   name                 = "publicIPAddress"
-   public_ip_address_id = azurerm_public_ip.pip.id
- }
+  frontend_ip_configuration {
+    name                 = "publicIPAddress"
+    public_ip_address_id = azurerm_public_ip.pip.id
+  }
 }
 
 resource "azurerm_lb_backend_address_pool" "test" {
- resource_group_name = azurerm_resource_group.rg.name
- loadbalancer_id     = azurerm_lb.lb.id
- name                = "BackEndAddressPool"
+  resource_group_name = azurerm_resource_group.rg.name
+  loadbalancer_id     = azurerm_lb.lb.id
+  name                = "BackEndAddressPool"
 }
 
 resource "azurerm_lb_nat_rule" "http" {
