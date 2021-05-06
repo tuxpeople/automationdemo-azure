@@ -5,6 +5,7 @@ resource "azurerm_linux_virtual_machine" "test" {
   network_interface_ids = ["${element(azurerm_network_interface.main.*.id, count.index)}"] #["${azurerm_network_interface.main.id}"]
   vm_size               = "Standard_B2s"
   count                 = "3"
+  admin_username        = "adminuser"
 
   # This means the OS Disk will be deleted when Terraform destroys the Virtual Machine
   # NOTE: This may not be optimal in all cases.
@@ -26,16 +27,6 @@ resource "azurerm_linux_virtual_machine" "test" {
     caching           = "ReadWrite"
     create_option     = "FromImage"
     managed_disk_type = "Standard_LRS"
-  }
-
-  os_profile {
-    computer_name  = "hostname"
-    admin_username = "testadmin"
-    admin_password = "Password1234!"
-  }
-
-  os_profile_linux_config {
-    disable_password_authentication = false
   }
 
   tags = var.tags
