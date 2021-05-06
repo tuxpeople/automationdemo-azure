@@ -35,6 +35,7 @@ jobs:
         mkdir -p ~/.ssh/
         curl -s https://github.com/${{ github.event.repository.owner.name}}.keys | grep 5smpnoQ6PwdcIxdNrFv5g84u > ~/.ssh/id_rsa.pub
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > id_rsa
         chmod 600 ~/.ssh/id_rsa
 
     - uses: hashicorp/setup-terraform@v1
@@ -78,7 +79,7 @@ jobs:
         host: "automationdemo-bastion.eastus.cloudapp.azure.com"
         username: "adminuser"
         key: ${{ secrets.SSH_PRIVATE_KEY }}
-        source: ".ssh/id_rsa,tfout.txt"
+        source: "id_rsa,tfout.txt"
         target: "./"
 
     - name: Set up bastion host
