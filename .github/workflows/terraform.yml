@@ -73,8 +73,8 @@ jobs:
       run: |
         bastion=$(grep bastion tfout.txt | cut -d'"' -f2)
         ssh-keyscan -H ${bastion} > ~/.ssh/known_hosts
-        scp -o user=adminuser tfout.txt ${bastion}:
-        scp -o user=adminuser ~/.ssh/id_rsa ${bastion}:~/.ssh/id_rsa
+        scp tfout.txt adminuser@${bastion}:~/tfout.txt
+        scp ~/.ssh/id_rsa adminuser@${bastion}:~/.ssh/id_rsa
         ssh adminuser@${bastion} "chmod 600 ~/.ssh/id_rsa"
 
     # - run: echo "${{ steps.apply.outputs.stdout }}"
