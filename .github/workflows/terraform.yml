@@ -71,6 +71,7 @@ jobs:
 
     - name: Copy ouputs to bastion host
       run: |
+        sleep 60
         bastion=$(grep bastion tfout.txt | cut -d'"' -f2)
         ssh-keyscan -H ${bastion} > ~/.ssh/known_hosts
         scp tfout.txt adminuser@${bastion}:
