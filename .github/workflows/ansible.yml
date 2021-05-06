@@ -1,4 +1,4 @@
-name: Ansible
+name: Ansible Run
 
 on:
   schedule:
