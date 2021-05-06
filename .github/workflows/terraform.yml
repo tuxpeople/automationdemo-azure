@@ -79,8 +79,8 @@ jobs:
       run: |
         bastion=$(grep bastion tfout.txt | cut -d'"' -f2)
         ssh-keyscan -H ${bastion} > ~/.ssh/known_hosts
-        chmod 600 terraform/id_rsa
-        ssh -i terraform/id_rsa adminuser@${bastion} "mv ~/id_rsa ~/.ssh/id_rsa; chmod 600 ~/.ssh/id_rsa"
+        chmod 600 id_rsa
+        ssh -i id_rsa adminuser@${bastion} "mv ~/id_rsa ~/.ssh/id_rsa; chmod 600 ~/.ssh/id_rsa"
 
     # - run: echo "${{ steps.apply.outputs.stdout }}"
     # - run: echo "${{ steps.apply.outputs.stderr }}"
