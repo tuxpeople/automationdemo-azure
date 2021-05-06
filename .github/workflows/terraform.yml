@@ -24,6 +24,7 @@ jobs:
     defaults:
       run:
         shell: bash
+        working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
  
     steps:
     # Checkout the repository to the GitHub Actions runner
@@ -31,38 +32,33 @@ jobs:
       uses: actions/checkout@v2
  
     - name: Get SSH public key
-      run: curl -s https://github.com/${{ github.event.repository.owner.name}}.keys | grep vKESkcuQ > ./terraform/id_rsa.pub
+      run: curl -s https://github.com/${{ github.event.repository.owner.name}}.keys | grep vKESkcuQ > ./id_rsa.pub
 
     - name: Get SSH private key
-      run: echo "${{ secrets.SSH_PRIVATE_KEY }}" > ./id_rsa; sed -i -e 's/^/     /' ./id_rsa; sed -i -e '/    content:/r ./id_rsa' scripts/master-cloud-init.txt
+      run: echo "${{ secrets.SSH_PRIVATE_KEY }}" > ./id_rsa; sed -i -e 's/^/     /' ./id_rsa; sed -i -e '/    content:/r ./id_rsa' ../scripts/master-cloud-init.txt
 
     - uses: hashicorp/setup-terraform@v1
 
     - name: Terraform fmt
       id: fmt
       run: terraform fmt -check
-      working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
 
     - name: Terraform Init
       id: init
       run: terraform init
-      working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
 
     - name: Terraform Validate
       id: validate
       run: terraform validate -no-color
-      working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
 
     - name: Terraform Plan
       id: plan
       run: terraform plan -no-color
-      working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
  
     - name: Terraform Apply
       if: github.ref == 'refs/heads/master'
       id: apply
       run: terraform apply -no-color
-      working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
 
     - run: echo ${{ steps.apply.outputs.stdout }}
     - run: echo ${{ steps.apply.outputs.stderr }}
