@@ -35,7 +35,7 @@ jobs:
 
     - name: Terraform destroy
       id: destroy
-      run: terraform destroy -auto-approve
+      run: terraform destroy -auto-approve -lock=false
     
     - run: echo ${{ steps.apply.destroy.stdout }}
     - run: echo ${{ steps.apply.destroy.stderr }}
