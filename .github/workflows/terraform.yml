@@ -78,7 +78,7 @@ jobs:
         host: "automationdemo-bastion.eastus.cloudapp.azure.com"
         username: "adminuser"
         key: ${{ secrets.SSH_PRIVATE_KEY }}
-        source: "~/.ssh/id_rsa,~/tfout.txt"
+        source: ".ssh/id_rsa,tfout.txt"
         target: "~/"
 
     - name: Set up bastion host
