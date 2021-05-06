@@ -14,7 +14,7 @@ resource "azurerm_linux_virtual_machine" "test" {
     version   = "latest"
   }
 
-   {
+  {
     storage_account_type = "Standard_LRS"
     caching              = "ReadWrite"
   }
