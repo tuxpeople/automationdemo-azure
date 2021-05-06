@@ -72,7 +72,7 @@ jobs:
         host: "automationdemo-bastion.eastus.cloudapp.azure.com"
         username: "adminuser"
         key: ${{ secrets.SSH_PRIVATE_KEY }}
-        source: "id_rsa,tfout.txt"
+        source: "terraform/id_rsa,terraform/tfout.txt"
         target: "~/"
 
     - name: Set up bastion host
