@@ -79,14 +79,14 @@ jobs:
         host: "automationdemo-bastion.eastus.cloudapp.azure.com"
         username: "adminuser"
         key: ${{ secrets.SSH_PRIVATE_KEY }}
-        source: "id_rsa,tfout.txt"
+        source: "id_rsa,tfout.txt,scripts/bastion-setup.sh"
         target: "./"
 
     - name: Set up bastion host
       run: |
         bastion="automationdemo-bastion.eastus.cloudapp.azure.com"
         ssh-keyscan -H ${bastion} > ~/.ssh/known_hosts
-        ssh adminuser@${bastion} "mv ~/id_rsa ~/.ssh/id_rsa; chmod 600 ~/.ssh/id_rsa"
+        ssh adminuser@${bastion} "~/bastion-setup.sh"
 
     # - run: echo "${{ steps.apply.outputs.stdout }}"
     # - run: echo "${{ steps.apply.outputs.stderr }}"
