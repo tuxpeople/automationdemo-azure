@@ -27,7 +27,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
-    - name: Fake public key
+    - name: Get public key
       run: curl -s https://github.com/tuxpeople.keys | grep vKESkcuQ > ./id_rsa.pub
 
     - uses: hashicorp/setup-terraform@v1
