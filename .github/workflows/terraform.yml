@@ -34,9 +34,7 @@ jobs:
       run: |
         mkdir -p ~/.ssh/
         curl -s https://github.com/${{ github.event.repository.owner.name}}.keys | grep 5smpnoQ6PwdcIxdNrFv5g84u > ~/.ssh/id_rsa.pub
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > id_rsa
-        chmod 600 ~/.ssh/id_rsa
 
     - uses: hashicorp/setup-terraform@v1
 
@@ -72,22 +70,41 @@ jobs:
       run: terraform output > ../tfout.txt
       working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
 
-    - name: Copy ouputs to bastion host
-      if: github.ref == 'refs/heads/master'
-      uses: appleboy/scp-action@master
-      with:
-        host: "automationdemo-bastion.eastus.cloudapp.azure.com"
-        username: "adminuser"
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        source: "id_rsa,tfout.txt"
-        target: "./"
-
     - name: Set up bastion host
-      run: |
-        pwd
-        bastion="automationdemo-bastion.eastus.cloudapp.azure.com"
-        ssh-keyscan -H ${bastion} > ~/.ssh/known_hosts
-        ssh -i id_rsa adminuser@${bastion} "mv ~/id_rsa ~/.ssh/id_rsa; chmod 600 ~/.ssh/id_rsa"
+      uses: alinz/ssh-scp-action@master
+      with:
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        host: automationdemo-bastion.eastus.cloudapp.azure.com
+        port: 22
+        user: adminuser
+        # runs this on remove server
+        ssh_before: |
+          mkdir -p ~/.ssh/
+
+        # then uploads these 2 files
+        scp: |
+          id_rsa automationdemo-bastion.eastus.cloudapp.azure.com:~/.ssh/id_rsa
+          tfout.txt adminuser@example.com:automationdemo-bastion.eastus.cloudapp.azure.com:~/tfout.tx
+
+        # then run these commands
+        ssh_after: |
+          chmod 600 ~/.ssh/id_rsa
+
+    # - name: Copy ouputs to bastion host
+    #   if: github.ref == 'refs/heads/master'
+    #   uses: appleboy/scp-action@master
+    #   with:
+    #     host: "automationdemo-bastion.eastus.cloudapp.azure.com"
+    #     username: "adminuser"
+    #     key: ${{ secrets.SSH_PRIVATE_KEY }}
+    #     source: "id_rsa,tfout.txt"
+    #     target: "./"
+
+    # - name: Set up bastion host
+    #   run: |
+    #     bastion="automationdemo-bastion.eastus.cloudapp.azure.com"
+    #     ssh-keyscan -H ${bastion} > ~/.ssh/known_hosts
+    #     ssh -i id_rsa adminuser@${bastion} "mv ~/id_rsa ~/.ssh/id_rsa; chmod 600 ~/.ssh/id_rsa"
 
     # - run: echo "${{ steps.apply.outputs.stdout }}"
     # - run: echo "${{ steps.apply.outputs.stderr }}"
