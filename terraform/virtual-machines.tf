@@ -16,7 +16,7 @@ resource "azurerm_linux_virtual_machine" "test" {
   size                  = "Standard_B2s"
   count                 = "3"
   admin_username        = "adminuser"
-  custom_data           = custom_data = filebase64("../scripts/master-cloud-init.txt")
+  custom_data           = filebase64("../scripts/master-cloud-init.txt")
 
   admin_ssh_key {
     username   = "adminuser"
