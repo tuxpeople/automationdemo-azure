@@ -35,7 +35,7 @@ jobs:
         mkdir -p ~/.ssh/
         curl -s https://github.com/${{ github.event.repository.owner.name}}.keys | grep 5smpnoQ6PwdcIxdNrFv5g84u > ~/.ssh/id_rsa.pub
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > id_rsa
-        cp id_rsa > ~/.ssh/id_rsa
+        cp id_rsa  ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
 
     - uses: hashicorp/setup-terraform@v1
