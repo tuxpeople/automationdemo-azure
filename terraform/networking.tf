@@ -64,6 +64,16 @@ resource "azurerm_lb_nat_rule" "https" {
   frontend_ip_configuration_name = "publicIPAddress"
 }
 
+resource "azurerm_lb_nat_rule" "https" {
+  resource_group_name            = azurerm_resource_group.rg.name
+  loadbalancer_id                = azurerm_lb.lb.id
+  name                           = "api"
+  protocol                       = "Tcp"
+  frontend_port                  = 6443
+  backend_port                   = 6443
+  frontend_ip_configuration_name = "publicIPAddress"
+}
+
 resource "azurerm_network_interface" "main" {
   name                = "${var.vm_name}-nic-${count.index}"
   location            = azurerm_resource_group.rg.location
