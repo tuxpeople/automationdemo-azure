@@ -24,7 +24,6 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
  
     steps:
     # Checkout the repository to the GitHub Actions runner
@@ -35,35 +34,42 @@ jobs:
       run: |
         mkdir -p ~/.ssh/
         curl -s https://github.com/${{ github.event.repository.owner.name}}.keys | grep 5smpnoQ6PwdcIxdNrFv5g84u > ~/.ssh/id_rsa.pub
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" id_rsa
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
 
     - uses: hashicorp/setup-terraform@v1
 
     - name: Terraform fmt
       id: fmt
       run: terraform fmt -check
+      working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
 
     - name: Terraform Init
       id: init
       run: terraform init
+      working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
 
     - name: Terraform Validate
       id: validate
       run: terraform validate -no-color
+      working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
 
     - name: Terraform Plan
       id: plan
       run: terraform plan -no-color -out=tfplan
+      working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
  
     - name: Terraform Apply
       if: github.ref == 'refs/heads/master'
       id: apply
       run: terraform apply -no-color tfplan
+      working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
 
     - name: Terraform Output
       if: github.ref == 'refs/heads/master'
       id: output
-      run: terraform output > tfout.txt
+      run: terraform output > ../tfout.txt
+      working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
 
     - name: Copy ouputs to bastion host
       if: github.ref == 'refs/heads/master'
@@ -72,15 +78,14 @@ jobs:
         host: "automationdemo-bastion.eastus.cloudapp.azure.com"
         username: "adminuser"
         key: ${{ secrets.SSH_PRIVATE_KEY }}
-        source: "terraform/id_rsa,terraform/tfout.txt"
+        source: "~/.ssh/id_rsa,~/tfout.txt"
         target: "~/"
 
     - name: Set up bastion host
       run: |
         pwd
-        bastion=$(grep bastion tfout.txt | cut -d'"' -f2)
+        bastion="automationdemo-bastion.eastus.cloudapp.azure.com"
         ssh-keyscan -H ${bastion} > ~/.ssh/known_hosts
-        chmod 600 id_rsa
         ssh -i id_rsa adminuser@${bastion} "mv ~/id_rsa ~/.ssh/id_rsa; chmod 600 ~/.ssh/id_rsa"
 
     # - run: echo "${{ steps.apply.outputs.stdout }}"
