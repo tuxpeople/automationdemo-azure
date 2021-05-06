@@ -3,7 +3,7 @@ resource "azurerm_linux_virtual_machine" "test" {
   location              = azurerm_resource_group.rg.location
   resource_group_name   = azurerm_resource_group.rg.name
   network_interface_ids = ["${element(azurerm_network_interface.main.*.id, count.index)}"] #["${azurerm_network_interface.main.id}"]
-  vm_size               = "Standard_B2s"
+  size                  = "Standard_B2s"
   count                 = "3"
   admin_username        = "adminuser"
 
