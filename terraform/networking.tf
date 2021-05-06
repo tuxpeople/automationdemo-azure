@@ -39,7 +39,7 @@ resource "azurerm_lb" "lb" {
   }
 }
 
-resource "azurerm_lb_backend_address_pool" "test" {
+resource "azurerm_lb_backend_address_pool" "backend" {
   resource_group_name = azurerm_resource_group.rg.name
   loadbalancer_id     = azurerm_lb.lb.id
   name                = "BackEndAddressPool"
@@ -77,4 +77,11 @@ resource "azurerm_network_interface" "main" {
     subnet_id                     = azurerm_subnet.subnet1.id
     private_ip_address_allocation = "dynamic"
   }
+}
+
+resource "azurerm_network_interface_backend_address_pool_association" "example" {
+  network_interface_id    = azurerm_network_interface.main.${count.index}.id
+  ip_configuration_name   = "testconfiguration${count.index}"
+  backend_address_pool_id = azurerm_lb_backend_address_pool.backend.id
+  count               = "3"
 }
