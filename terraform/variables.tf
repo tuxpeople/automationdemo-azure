@@ -1,7 +1,7 @@
-variable "ARM_CLIENT_ID" {
+variable "appId" {
   description = "Azure Kubernetes Service Cluster service principal"
 }
 
-variable "ARM_CLIENT_SECRET" {
+variable "password" {
   description = "Azure Kubernetes Service Cluster password"
 }
