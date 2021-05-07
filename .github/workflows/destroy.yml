@@ -27,9 +27,6 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
-    - name: Get public key
-      run: curl -s https://github.com/tuxpeople.keys | grep vKESkcuQ > ./id_rsa.pub
-
     - uses: hashicorp/setup-terraform@v1
 
     - name: Terraform Init
@@ -39,7 +36,3 @@ jobs:
     - name: Terraform destroy
       id: destroy
       run: terraform destroy -auto-approve -lock=false
-    
-    - run: echo ${{ steps.apply.destroy.stdout }}
-    - run: echo ${{ steps.apply.destroy.stderr }}
-    - run: echo ${{ steps.apply.destroy.exitcode }}

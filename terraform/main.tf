@@ -9,9 +9,11 @@ terraform {
   required_providers {
     azurerm = {
       source  = "azurerm"
-      version = "~>2.0"
+      version = "2.42.0"
     }
   }
+
+  required_version = "~> 0.14"
 }
 
 provider "azurerm" {
@@ -22,7 +24,13 @@ provider "azurerm" {
 
 data "azurerm_client_config" "current" {}
 
-resource "azurerm_resource_group" "rg" {
-  name     = var.resource_group_name
-  location = var.location
+resource "random_pet" "prefix" {}
+
+resource "azurerm_resource_group" "default" {
+  name     = "${random_pet.prefix.id}-rg"
+  location = "East US"
+
+  tags = {
+    environment = "Demo"
+  }
 }

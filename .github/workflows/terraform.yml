@@ -29,14 +29,6 @@ jobs:
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
       uses: actions/checkout@v2
- 
-    - name: Create SSH key
-      run: |
-        mkdir -p ~/.ssh/
-        curl -s https://github.com/${{ github.event.repository.owner.name}}.keys | grep 5smpnoQ6PwdcIxdNrFv5g84u > ~/.ssh/id_rsa.pub
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" > id_rsa
-        cp id_rsa  ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
 
     - uses: hashicorp/setup-terraform@v1
 
@@ -65,30 +57,3 @@ jobs:
       id: apply
       run: terraform apply -no-color tfplan
       working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
-
-    - name: Terraform Output
-      if: github.ref == 'refs/heads/master'
-      id: output
-      run: terraform output > ../tfout.txt
-      working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
-
-    - name: Copy ouputs to bastion host
-      if: github.ref == 'refs/heads/master'
-      uses: appleboy/scp-action@master
-      with:
-        host: "automationdemo-bastion.eastus.cloudapp.azure.com"
-        username: "adminuser"
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        source: "id_rsa,tfout.txt,scripts/bastion-setup.sh"
-        target: "./"
-
-    - name: Set up bastion host
-      if: github.ref == 'refs/heads/master'
-      run: |
-        bastion="automationdemo-bastion.eastus.cloudapp.azure.com"
-        ssh-keyscan -H ${bastion} > ~/.ssh/known_hosts
-        ssh adminuser@${bastion} "~/bastion-setup.sh"
-
-    # - run: echo "${{ steps.apply.outputs.stdout }}"
-    # - run: echo "${{ steps.apply.outputs.stderr }}"
-    # - run: echo "${{ steps.apply.outputs.exitcode }}"
