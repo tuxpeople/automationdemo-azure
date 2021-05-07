@@ -34,7 +34,8 @@ jobs:
 
     - name: Set up Terraform
       uses: hashicorp/setup-terraform@v1
-
+      with:
+        terraform_wrapper: false
     - name: Terraform fmt
       id: fmt
       working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
@@ -69,10 +70,7 @@ jobs:
       if: github.ref == 'refs/heads/master'
       id: kubeconfig
       working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
-      run: |
-        RG=$(echo '${{ steps.apply.outputs.stdout }}' | grep resource_group_name | cut -d'"' -f2')
-        NAME=$(echo '${{ steps.apply.outputs.stdout }}' | grep kubernetes_cluster_name | cut -d'"' -f2')
-        az aks get-credentials --resource-group ${RG} --name ${NAME} -f kubeconfig.cfg
+      run: az aks get-credentials --resource-group $(terraform output -raw resource_group_name) --name $(terraform output -raw kubernetes_cluster_name) -f kubeconfig.cfg
 
     - uses: azure/setup-kubectl@v1
     - uses: azure/k8s-set-context@v1
