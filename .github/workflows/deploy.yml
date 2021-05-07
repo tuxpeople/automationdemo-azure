@@ -66,6 +66,11 @@ jobs:
       working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
       run: terraform apply -no-color tfplan
 
+    - name: 
+      if: github.ref == 'refs/heads/master'
+      id: debug1
+      run: ls -la .
+
     # - uses: azure/login@v1
     #   with:
     #     creds: ${{ secrets.AZURE_CREDENTIAL }}
