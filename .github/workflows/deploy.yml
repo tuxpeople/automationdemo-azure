@@ -70,8 +70,8 @@ jobs:
       id: kubeconfig
       working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
       run: |
-        RG=$(echo ${{ steps.apply.outputs.stdout }} | grep resource_group_name | cut -d'"' -f2')
-        NAME=$(echo ${{ steps.apply.outputs.stdout }} | grep kubernetes_cluster_name | cut -d'"' -f2')
+        RG=$(echo '${{ steps.apply.outputs.stdout }}' | grep resource_group_name | cut -d'"' -f2')
+        NAME=$(echo '${{ steps.apply.outputs.stdout }}' | grep kubernetes_cluster_name | cut -d'"' -f2')
         az aks get-credentials --resource-group ${RG} --name ${NAME} -f kubeconfig.cfg
 
     - uses: azure/setup-kubectl@v1
