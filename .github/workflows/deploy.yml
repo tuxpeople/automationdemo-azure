@@ -65,8 +65,8 @@ jobs:
       id: output
       working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
       run: |
-        RG=$(terraform output -raw resource_group_name | cut -d':' -f1)
-        NAME=$(terraform output -raw kubernetes_cluster_name | cut -d':' -f1)
+        RG=$(terraform output -raw resource_group_name | tail -1)
+        NAME=$(terraform output -raw kubernetes_cluster_name | tail -1)
         echo ::set-output name=rg::${RG}
         echo ::set-output name=name::${NAME}
 
