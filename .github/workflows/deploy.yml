@@ -71,26 +71,15 @@ jobs:
       working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
       run: terraform apply -no-color tfplan
 
-    # - uses: azure/login@v1
-    #   with:
-    #     creds: ${{ secrets.AZURE_CREDENTIAL }}
-
-    # - name: Get kubeconfig
-    #   if: github.ref == 'refs/heads/master'
-    #   id: kubeconfig
-    #   working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
-    #   run: az aks get-credentials --resource-group $(terraform output -raw resource_group_name) --name $(terraform output -raw kubernetes_cluster_name)
-    
-    - name: Set env KUBECONFIG
-      run: |
-        echo 'KUBECONFIG<<EOF' >> $GITHUB_ENV
-        cat ./kube_config >> $GITHUB_ENV
-        echo 'EOF' >> $GITHUB_ENV
-
-    - uses: azure/k8s-set-context@v1
+    - uses: azure/login@v1
       with:
-        method: kubeconfig
-        kubeconfig: "${{ env.KUBECONFIG }}"
+        creds: ${{ secrets.AZURE_CREDENTIAL }}
+
+    - name: Get kubeconfig
+      if: github.ref == 'refs/heads/master'
+      id: kubeconfig
+      working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
+      run: az aks get-credentials --resource-group $(terraform output -raw resource_group_name) --name $(terraform output -raw kubernetes_cluster_name)
 
     - name: Install Flux v2
       if: github.ref == 'refs/heads/master'
@@ -105,4 +94,4 @@ jobs:
         kubectl get nodes
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ${{ env.FLUX_GITHUB_KEY }}
         chmod 600 ${{ env.FLUX_GITHUB_KEY }}
-        flux bootstrap git --url=ssh://github.com:${{ env.FLUX_GITHUB_USER }}/${{ env.FLUX_GITHUB_REPO }} --branch=${{ env.FLUX_GITHUB_BRANCH }} --path=${{ env.FLUX_GITHUB_PATH }} --private-key-file=${{ env.FLUX_GITHUB_KEY }}
+        flux bootstrap git --url=ssh://git@github.com/${{ env.FLUX_GITHUB_USER }}/${{ env.FLUX_GITHUB_REPO }} --branch=${{ env.FLUX_GITHUB_BRANCH }} --path=${{ env.FLUX_GITHUB_PATH }} --private-key-file=${{ env.FLUX_GITHUB_KEY }}
