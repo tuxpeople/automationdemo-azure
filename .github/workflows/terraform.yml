@@ -77,7 +77,7 @@ jobs:
     - name: Get kubeconfig
       if: github.ref == 'refs/heads/master'
       id: kubeconfig
-      run: az aks get-credentials --resource-group ${{ steps.output.outputs.rg } --name ${{ steps.output.outputs.name }} -f kubeconfig.cfg
+      run: az aks get-credentials --resource-group ${{ steps.output.outputs.rg }} --name ${{ steps.output.outputs.name }} -f kubeconfig.cfg
       working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
 
     - uses: azure/setup-kubectl@v1
