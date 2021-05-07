@@ -37,12 +37,6 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
-    - name: Create SSH key
-      run: |
-        mkdir -p ~/.ssh/
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ${{ env.FLUX_GITHUB_KEY }}
-        chmod 600 ${{ env.FLUX_GITHUB_KEY }}
-
     - name: Set up Terraform
       uses: hashicorp/setup-terraform@v1
       with:
@@ -90,5 +84,8 @@ jobs:
       if: github.ref == 'refs/heads/master'
       id: flux2
       run: |
+        mkdir -p ~/.ssh/
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ${{ env.FLUX_GITHUB_KEY }}
+        chmod 600 ${{ env.FLUX_GITHUB_KEY }}
         curl -s https://fluxcd.io/install.sh | sudo bash 
         flux bootstrap git --url=ssh://github.com/${{ env.FLUX_GITHUB_USER }}/${{ env.FLUX_GITHUB_REPO }} --branch=${{ env.FLUX_GITHUB_BRANCH }} --path=${{ env.FLUX_GITHUB_PATH }} --private-key-file=${{ env.FLUX_GITHUB_KEY }}
