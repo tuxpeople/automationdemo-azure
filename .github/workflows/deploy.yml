@@ -71,15 +71,15 @@ jobs:
       working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
       run: terraform apply -no-color tfplan
 
-    - uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIAL }}
+    # - uses: azure/login@v1
+    #   with:
+    #     creds: ${{ secrets.AZURE_CREDENTIAL }}
 
-    - name: Get kubeconfig
-      if: github.ref == 'refs/heads/master'
-      id: kubeconfig
-      working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
-      run: az aks get-credentials --resource-group $(terraform output -raw resource_group_name) --name $(terraform output -raw kubernetes_cluster_name)
+    # - name: Get kubeconfig
+    #   if: github.ref == 'refs/heads/master'
+    #   id: kubeconfig
+    #   working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
+    #   run: az aks get-credentials --resource-group $(terraform output -raw resource_group_name) --name $(terraform output -raw kubernetes_cluster_name)
     
     - name: Install Flux v2
       if: github.ref == 'refs/heads/master'
