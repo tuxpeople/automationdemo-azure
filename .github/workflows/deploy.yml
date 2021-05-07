@@ -19,7 +19,7 @@ jobs:
       TF_VAR_password: ${{ secrets.AZURE_AD_CLIENT_SECRET }}
       TF_ACTIONS_WORKING_DIR: "./terraform"
       FLUX_GITHUB_USER: "tuxpeople"
-      FLUX_GITHUB_REPO: "automationdemo-azure"
+      FLUX_GITHUB_REPO: "automationdemo-kubernetes"
       FLUX_GITHUB_BRANCH: "master"
       FLUX_GITHUB_PATH: "./clusters/demo"
       FLUX_GITHUB_KEY: "/home/runner/id_rsa_github"
