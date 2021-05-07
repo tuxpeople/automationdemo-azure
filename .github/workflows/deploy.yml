@@ -22,7 +22,7 @@ jobs:
       FLUX_GITHUB_REPO: "k8s-server"
       FLUX_GITHUB_BRANCH: "maste"
       FLUX_GITHUB_PATH: "clusters/demo"
-      FLUX_GITHUB_KEY: "/home/runner/id_rsa_github"
+      FLUX_GITHUB_KEY: "~/.ssh/id_rsa_github"
 
     runs-on: ubuntu-latest
     environment: demo
@@ -80,12 +80,15 @@ jobs:
       working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
       run: az aks get-credentials --resource-group $(terraform output -raw resource_group_name) --name $(terraform output -raw kubernetes_cluster_name)
     
-    - name: Bootstrap Flux v2
+    - name: Install Flux v2
       if: github.ref == 'refs/heads/master'
-      id: flux2
+      id: install_flux
       run: |
-        mkdir -p ~/.ssh/
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ${{ env.FLUX_GITHUB_KEY }}
-        chmod 600 ${{ env.FLUX_GITHUB_KEY }}
-        curl -s https://fluxcd.io/install.sh | sudo bash 
-        flux bootstrap git --url=ssh://github.com/${{ env.FLUX_GITHUB_USER }}/${{ env.FLUX_GITHUB_REPO }} --branch=${{ env.FLUX_GITHUB_BRANCH }} --path=${{ env.FLUX_GITHUB_PATH }} --private-key-file=${{ env.FLUX_GITHUB_KEY }}
+        curl -s https://fluxcd.io/install.sh | sudo bash
+    
+    - name: Bootstrap Flux
+      if: github.ref == 'refs/heads/master'
+      id: bootstrap_flux
+      run: |
+        GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
+        flux bootstrap github --owner=${{ env.FLUX_GITHUB_USER }} --repository=${{ env.FLUX_GITHUB_REPO }} --branch=${{ env.FLUX_GITHUB_BRANCH }} --personal --path=${{ env.FLUX_GITHUB_PATH }} --private-key-file=${{ env.FLUX_GITHUB_KEY }}
