@@ -1,15 +1,15 @@
 name: 'Deploy'
- 
+
 on:
-  push:
-    branches:
-    - master
-  pull_request:
-    types: [assigned, opened, synchronize, reopened]
+  workflow_run:
+    workflows: ["Deploy"]
+    branches: [master]
+    types: 
+      - completed
 
 jobs:
-  terraform:
-    name: 'Deploy'
+  cluster:
+    name: 'Set up cluster'
     env:
       ARM_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID }}
       ARM_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET }}
@@ -37,33 +37,31 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
-    - name: Set up Terraform
-      uses: hashicorp/setup-terraform@v1
+    - name: Login to azure
+      uses: azure/login@v1
       with:
-         terraform_wrapper: false
+        creds: ${{ secrets.AZURE_CREDENTIAL }}
 
-    - name: Terraform fmt
-      id: fmt
-      working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
-      run: terraform fmt -check
-
-    - name: Terraform Init
-      id: init
-      working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
-      run: terraform init
-
-    - name: Terraform Validate
-      id: validate
-      working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
-      run: terraform validate -no-color
-
-    - name: Terraform Plan
-      id: plan
-      working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
-      run: terraform plan -no-color -out=tfplan
- 
-    - name: Terraform Apply
+    - name: Get kubeconfig
       if: github.ref == 'refs/heads/master'
-      id: apply
+      id: kubeconfig
       working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
-      run: terraform apply -no-color tfplan
+      run: az aks get-credentials --resource-group $(terraform output -raw resource_group_name) --name $(terraform output -raw kubernetes_cluster_name)
+
+    - name: Setup Flux CLI
+      if: github.ref == 'refs/heads/master'
+      id: install_flux
+      uses: fluxcd/flux2/action@main
+    
+    - name: Bootstrap Flux
+      if: github.ref == 'refs/heads/master'
+      id: bootstrap_flux
+      run: |
+        GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} \
+          flux bootstrap github  \
+          --owner=${{ env.FLUX_GITHUB_USER }}  \
+          --repository=${{ env.FLUX_GITHUB_REPO }}  \
+          --branch=${{ env.FLUX_GITHUB_BRANCH }}  \
+          --personal=true  \
+          --private=false \
+          --path=${{ env.FLUX_GITHUB_PATH }}
