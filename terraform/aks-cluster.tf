@@ -29,3 +29,8 @@ resource "azurerm_kubernetes_cluster" "default" {
     environment = "Demo"
   }
 }
+
+resource "local_file" "kube_config" {
+    content  = azurerm_kubernetes_cluster.default.kube_config_raw
+    filename = "../kube_config"
+}
