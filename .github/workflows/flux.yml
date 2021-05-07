@@ -1,4 +1,4 @@
-name: 'Deploy'
+name: 'Cluster'
 
 on:
   workflow_run:
