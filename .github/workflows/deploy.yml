@@ -72,7 +72,7 @@ jobs:
       run: |
         RG=$(echo ${{ steps.plan.apply.stdout }} | grep resource_group_name | cut -d'"' -f2')
         NAME=$(echo ${{ steps.plan.apply.stdout }} | grep kubernetes_cluster_name | cut -d'"' -f2')
-        az aks get-credentials --resource-group $(terraform output -raw resource_group_name) --name $(terraform output -raw kubernetes_cluster_name) -f kubeconfig.cfg
+        az aks get-credentials --resource-group ${RG} --name ${NAME} -f kubeconfig.cfg
 
     - uses: azure/setup-kubectl@v1
     - uses: azure/k8s-set-context@v1
