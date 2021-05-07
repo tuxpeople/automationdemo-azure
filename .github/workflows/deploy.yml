@@ -83,7 +83,9 @@ jobs:
     
     - name: Set env KUBECONFIG
       run: |
-        echo ::set-env name=KUBECONFIG::$(cat ./kube_config)
+        echo 'KUBECONFIG<<EOF' >> $GITHUB_ENV
+        cat ./kube_config >> $GITHUB_ENV
+        echo 'EOF' >> $GITHUB_ENV
 
     - uses: azure/k8s-set-context@v1
       with:
