@@ -83,6 +83,7 @@ jobs:
         target: "./"
 
     - name: Set up bastion host
+      if: github.ref == 'refs/heads/master'
       run: |
         bastion="automationdemo-bastion.eastus.cloudapp.azure.com"
         ssh-keyscan -H ${bastion} > ~/.ssh/known_hosts
