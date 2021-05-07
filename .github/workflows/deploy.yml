@@ -91,7 +91,11 @@ jobs:
       if: github.ref == 'refs/heads/master'
       id: bootstrap_flux
       run: |
-        kubectl get nodes
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ${{ env.FLUX_GITHUB_KEY }}
-        chmod 600 ${{ env.FLUX_GITHUB_KEY }}
-        flux bootstrap git --url=ssh://git@github.com/${{ env.FLUX_GITHUB_USER }}/${{ env.FLUX_GITHUB_REPO }} --branch=${{ env.FLUX_GITHUB_BRANCH }} --path=${{ env.FLUX_GITHUB_PATH }} --private-key-file=${{ env.FLUX_GITHUB_KEY }}
+        GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} \
+          flux bootstrap github  \
+          --owner=${{ env.FLUX_GITHUB_USER }}  \
+          --repository=${{ env.FLUX_GITHUB_REPO }}  \
+          --branch=${{ env.FLUX_GITHUB_BRANCH }}  \
+          --personal=true  \
+          --private=false \
+          --path=${{ env.FLUX_GITHUB_PATH }}
