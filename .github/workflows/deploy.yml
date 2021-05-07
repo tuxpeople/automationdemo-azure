@@ -66,17 +66,14 @@ jobs:
       with:
         creds: ${{ secrets.AZURE_CREDENTIAL }}
 
+    - name: Set up kubectl
+      uses: azure/setup-kubectl@v1
+
     - name: Get kubeconfig
       if: github.ref == 'refs/heads/master'
       id: kubeconfig
       working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
-      run: az aks get-credentials --resource-group $(terraform output -raw resource_group_name) --name $(terraform output -raw kubernetes_cluster_name) -f kubeconfig.cfg
-
-    - uses: azure/setup-kubectl@v1
-    - uses: azure/k8s-set-context@v1
-      with:
-        method: kubeconfig
-        kubeconfig: "terraform/kubeconfig.cfg"
+      run: az aks get-credentials --resource-group $(terraform output -raw resource_group_name) --name $(terraform output -raw kubernetes_cluster_name)
     
     - name: Get Nodes
       if: github.ref == 'refs/heads/master'
