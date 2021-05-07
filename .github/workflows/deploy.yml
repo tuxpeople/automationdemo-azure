@@ -81,6 +81,15 @@ jobs:
     #   working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
     #   run: az aks get-credentials --resource-group $(terraform output -raw resource_group_name) --name $(terraform output -raw kubernetes_cluster_name)
     
+    - name: Set env KUBECONFIG
+      run: |
+        echo ::set-env name=KUBECONFIG::$(cat ./kube_config)
+
+    - uses: azure/k8s-set-context@v1
+      with:
+        method: kubeconfig
+        kubeconfig: "${{ env.KUBECONFIG }}"
+
     - name: Install Flux v2
       if: github.ref == 'refs/heads/master'
       id: install_flux

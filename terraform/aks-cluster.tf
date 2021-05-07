@@ -32,7 +32,7 @@ resource "azurerm_kubernetes_cluster" "default" {
 
 resource "local_file" "kube_config" {
   content              = azurerm_kubernetes_cluster.default.kube_config_raw
-  filename             = "~/.kube/config"
+  filename             = "../kube_config"
   directory_permission = "0750"
   file_permission      = "0750"
 }
