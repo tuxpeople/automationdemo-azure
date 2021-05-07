@@ -91,7 +91,6 @@ jobs:
       if: github.ref == 'refs/heads/master'
       id: bootstrap_flux
       run: |
-        cat ./kube_config
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ${{ env.FLUX_GITHUB_KEY }}
         chmod 600 ${{ env.FLUX_GITHUB_KEY }}
         flux bootstrap git --url=ssh://github.com/${{ env.FLUX_GITHUB_USER }}/${{ env.FLUX_GITHUB_REPO }} --branch=${{ env.FLUX_GITHUB_BRANCH }} --path=${{ env.FLUX_GITHUB_PATH }} --private-key-file=${{ env.FLUX_GITHUB_KEY }}
