@@ -20,7 +20,7 @@ jobs:
       TF_ACTIONS_WORKING_DIR: "./terraform"
 
     runs-on: ubuntu-latest
-    environment: production
+    environment: demo
  
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
     defaults:
