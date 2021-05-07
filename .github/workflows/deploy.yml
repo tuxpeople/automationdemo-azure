@@ -37,6 +37,9 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
+    - name: Set up Kubectl
+      uses: azure/setup-kubectl@v1
+
     - name: Set up Terraform
       uses: hashicorp/setup-terraform@v1
       with:
@@ -71,9 +74,6 @@ jobs:
     - uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIAL }}
-
-    - name: Set up kubectl
-      uses: azure/setup-kubectl@v1
 
     - name: Get kubeconfig
       if: github.ref == 'refs/heads/master'
