@@ -37,6 +37,16 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
+    - name: Set up Terraform
+      uses: hashicorp/setup-terraform@v1
+      with:
+         terraform_wrapper: false
+
+    - name: Terraform Init
+      id: init
+      working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
+      run: terraform init
+
     - name: Login to azure
       uses: azure/login@v1
       with:
