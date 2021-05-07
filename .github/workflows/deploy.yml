@@ -39,6 +39,8 @@ jobs:
 
     - name: Set up Terraform
       uses: hashicorp/setup-terraform@v1
+      with:
+         terraform_wrapper: false
 
     - name: Terraform fmt
       id: fmt
@@ -65,3 +67,32 @@ jobs:
       id: apply
       working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
       run: terraform apply -no-color tfplan
+
+    - name: Login to azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIAL }}
+
+    - name: Get kubeconfig
+      if: github.ref == 'refs/heads/master'
+      id: kubeconfig
+      working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
+      run: az aks get-credentials --resource-group $(terraform output -raw resource_group_name) --name $(terraform output -raw kubernetes_cluster_name)
+
+    - name: Setup Flux CLI
+      if: github.ref == 'refs/heads/master'
+      id: install_flux
+      uses: fluxcd/flux2/action@main
+    
+    - name: Bootstrap Flux
+      if: github.ref == 'refs/heads/master'
+      id: bootstrap_flux
+      run: |
+        GITHUB_TOKEN=${{ secrets.GH_TOKEN }} \
+          flux bootstrap github  \
+          --owner=${{ env.FLUX_GITHUB_USER }}  \
+          --repository=${{ env.FLUX_GITHUB_REPO }}  \
+          --branch=${{ env.FLUX_GITHUB_BRANCH }}  \
+          --personal=true  \
+          --private=false \
+          --path=${{ env.FLUX_GITHUB_PATH }}
