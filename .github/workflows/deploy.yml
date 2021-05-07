@@ -90,5 +90,12 @@ jobs:
       if: github.ref == 'refs/heads/master'
       id: bootstrap_flux
       run: |
-        GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
-        flux bootstrap github --owner=${{ env.FLUX_GITHUB_USER }} --repository=${{ env.FLUX_GITHUB_REPO }} --branch=${{ env.FLUX_GITHUB_BRANCH }} --personal --path=${{ env.FLUX_GITHUB_PATH }} --private-key-file=${{ env.FLUX_GITHUB_KEY }}
+        GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} \
+          flux bootstrap github  \
+          --owner=${{ env.FLUX_GITHUB_USER }}  \
+          --repository=${{ env.FLUX_GITHUB_REPO }}  \
+          --branch=${{ env.FLUX_GITHUB_BRANCH }}  \
+          --personal  \
+          --private=false \
+          --path=${{ env.FLUX_GITHUB_PATH }}  \
+          --private-key-file=${{ env.FLUX_GITHUB_KEY }}
