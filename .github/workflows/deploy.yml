@@ -67,35 +67,35 @@ jobs:
       working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
       run: terraform apply -no-color tfplan
 
-    - uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIAL }}
+    # - uses: azure/login@v1
+    #   with:
+    #     creds: ${{ secrets.AZURE_CREDENTIAL }}
 
-    - name: Set up kubectl
-      uses: azure/setup-kubectl@v1
+    # - name: Set up kubectl
+    #   uses: azure/setup-kubectl@v1
 
-    - name: Get kubeconfig
-      if: github.ref == 'refs/heads/master'
-      id: kubeconfig
-      working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
-      run: az aks get-credentials --resource-group $(terraform output -raw resource_group_name) --name $(terraform output -raw kubernetes_cluster_name)
+    # - name: Get kubeconfig
+    #   if: github.ref == 'refs/heads/master'
+    #   id: kubeconfig
+    #   working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
+    #   run: az aks get-credentials --resource-group $(terraform output -raw resource_group_name) --name $(terraform output -raw kubernetes_cluster_name)
     
-    - name: Install Flux v2
-      if: github.ref == 'refs/heads/master'
-      id: install_flux
-      run: |
-        curl -s https://fluxcd.io/install.sh | sudo bash
+    # - name: Install Flux v2
+    #   if: github.ref == 'refs/heads/master'
+    #   id: install_flux
+    #   run: |
+    #     curl -s https://fluxcd.io/install.sh | sudo bash
     
-    - name: Bootstrap Flux
-      if: github.ref == 'refs/heads/master'
-      id: bootstrap_flux
-      run: |
-        GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} \
-          flux bootstrap github  \
-          --owner=${{ env.FLUX_GITHUB_USER }}  \
-          --repository=${{ env.FLUX_GITHUB_REPO }}  \
-          --branch=${{ env.FLUX_GITHUB_BRANCH }}  \
-          --personal  \
-          --private=false \
-          --path=${{ env.FLUX_GITHUB_PATH }}  \
-          --private-key-file=${{ env.FLUX_GITHUB_KEY }}
+    # - name: Bootstrap Flux
+    #   if: github.ref == 'refs/heads/master'
+    #   id: bootstrap_flux
+    #   run: |
+    #     GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} \
+    #       flux bootstrap github  \
+    #       --owner=${{ env.FLUX_GITHUB_USER }}  \
+    #       --repository=${{ env.FLUX_GITHUB_REPO }}  \
+    #       --branch=${{ env.FLUX_GITHUB_BRANCH }}  \
+    #       --personal  \
+    #       --private=false \
+    #       --path=${{ env.FLUX_GITHUB_PATH }}  \
+    #       --private-key-file=${{ env.FLUX_GITHUB_KEY }}
