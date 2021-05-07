@@ -22,7 +22,7 @@ jobs:
       FLUX_GITHUB_REPO: "k8s-server"
       FLUX_GITHUB_BRANCH: "maste"
       FLUX_GITHUB_PATH: "clusters/demo"
-      FLUX_GITHUB_KEY: "~/.ssh/id_rsa_github"
+      FLUX_GITHUB_KEY: "/home/runner/id_rsa_github"
 
     runs-on: ubuntu-latest
     environment: demo
