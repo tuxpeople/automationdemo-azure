@@ -81,9 +81,9 @@ resource "azurerm_network_interface" "main" {
   }
 }
 
-#resource "azurerm_network_interface_backend_address_pool_association" "association" {
-#  network_interface_id    =  ["${element(azurerm_network_interface.main.*.id, count.index)}"]
-#  ip_configuration_name   = "testconfiguration${count.index}"
-#  backend_address_pool_id = azurerm_lb_backend_address_pool.backend.id
-#  count                   = "3"
-#}
+resource "azurerm_network_interface_backend_address_pool_association" "association" {
+  network_interface_id    =  ["${element(azurerm_network_interface.main.*.id, count.index)}"]
+  ip_configuration_name   = "testconfiguration${count.index}"
+  backend_address_pool_id = azurerm_lb_backend_address_pool.backend.id
+  count                   = "3"
+}
