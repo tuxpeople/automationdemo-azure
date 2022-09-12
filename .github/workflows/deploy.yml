@@ -69,7 +69,7 @@ jobs:
       run: terraform apply -no-color tfplan
 
     - name: Login to azure
-      uses: azure/login@v1.4.4
+      uses: azure/login@v1.4.6
       with:
         creds: ${{ secrets.AZURE_CREDENTIAL }}
 
