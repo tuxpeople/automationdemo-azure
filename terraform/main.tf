@@ -9,7 +9,7 @@ terraform {
   required_providers {
     azurerm = {
       source  = "azurerm"
-      version = "3.116.0"
+      version = "4.0.0"
     }
   }
 
